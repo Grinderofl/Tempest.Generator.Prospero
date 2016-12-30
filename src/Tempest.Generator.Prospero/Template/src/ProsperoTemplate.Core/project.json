@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "NETStandard.Library": "1.6.1",
+    "Prospero.DataAccess.Abstractions": "1.0.0-*",
+    "Prospero.DataAccess.EFCore": "1.0.0-*",
+    "FluentModelBuilder": "1.4.1",
+    "FluentModelBuilder.Relational": "1.4.1",
+    "AutoMapper": "5.0.2"
+  },
+
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50"
+    }
+  }
+}

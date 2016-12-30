@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0-*",
+  "dependencies": {
+    "ProsperoTemplate.Core": "*",
+    "xunit": "2.1.0"
+  },
+  "buildOptions": {
+    "preserveCompilationContext": true
+  },
+  "testRunner": "xunit",
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": [ "dnxcore50", "portable-net45+win8" ],
+      "dependencies": {
+        "dotnet-test-xunit": "1.0.0-*",
+        "Microsoft.NETCore.App": {
+          "version": "1.0.0",
+          "type": "platform"
+        }
+      }
+    }
+  }
+}

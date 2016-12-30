@@ -1,0 +1,64 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EA58DE65-77B1-45EC-BEDE-A07D2F509BD6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{37C0BB81-A68A-4933-A63E-0B8745AD6127}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+		NuGet.config = NuGet.config
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProsperoTemplate.Web", "src\ProsperoTemplate.Web\ProsperoTemplate.Web.xproj", "{E4313D61-92F3-423A-A8D9-2E1B86F99D5D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{72ADAC01-C6D2-49FB-A545-02CF443A3D14}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{2F0B5E11-8846-45B9-9859-0EB8799B3D90}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{5AC1D681-A469-4578-9215-0CB4884F8E71}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProsperoTemplate.Service", "src\ProsperoTemplate.Service\ProsperoTemplate.Service.xproj", "{7253DFD8-28C6-4E8E-B114-06418364F401}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProsperoTemplate.Core", "src\ProsperoTemplate.Core\ProsperoTemplate.Core.xproj", "{0005792B-1C5A-4FF7-9647-269C4688C69A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{AC2FFFD2-8AC8-49D9-AF11-C197FD60096A}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProsperoTemplate.Tests", "test\ProsperoTemplate.Tests\ProsperoTemplate.Tests.xproj", "{138B3DE8-D8E2-4B32-8DA0-A8FA38D25273}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E4313D61-92F3-423A-A8D9-2E1B86F99D5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4313D61-92F3-423A-A8D9-2E1B86F99D5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4313D61-92F3-423A-A8D9-2E1B86F99D5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4313D61-92F3-423A-A8D9-2E1B86F99D5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7253DFD8-28C6-4E8E-B114-06418364F401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7253DFD8-28C6-4E8E-B114-06418364F401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7253DFD8-28C6-4E8E-B114-06418364F401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7253DFD8-28C6-4E8E-B114-06418364F401}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0005792B-1C5A-4FF7-9647-269C4688C69A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0005792B-1C5A-4FF7-9647-269C4688C69A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0005792B-1C5A-4FF7-9647-269C4688C69A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0005792B-1C5A-4FF7-9647-269C4688C69A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{138B3DE8-D8E2-4B32-8DA0-A8FA38D25273}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{138B3DE8-D8E2-4B32-8DA0-A8FA38D25273}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{138B3DE8-D8E2-4B32-8DA0-A8FA38D25273}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{138B3DE8-D8E2-4B32-8DA0-A8FA38D25273}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E4313D61-92F3-423A-A8D9-2E1B86F99D5D} = {5AC1D681-A469-4578-9215-0CB4884F8E71}
+		{72ADAC01-C6D2-49FB-A545-02CF443A3D14} = {EA58DE65-77B1-45EC-BEDE-A07D2F509BD6}
+		{2F0B5E11-8846-45B9-9859-0EB8799B3D90} = {EA58DE65-77B1-45EC-BEDE-A07D2F509BD6}
+		{5AC1D681-A469-4578-9215-0CB4884F8E71} = {EA58DE65-77B1-45EC-BEDE-A07D2F509BD6}
+		{7253DFD8-28C6-4E8E-B114-06418364F401} = {2F0B5E11-8846-45B9-9859-0EB8799B3D90}
+		{0005792B-1C5A-4FF7-9647-269C4688C69A} = {72ADAC01-C6D2-49FB-A545-02CF443A3D14}
+		{138B3DE8-D8E2-4B32-8DA0-A8FA38D25273} = {AC2FFFD2-8AC8-49D9-AF11-C197FD60096A}
+	EndGlobalSection
+EndGlobal
