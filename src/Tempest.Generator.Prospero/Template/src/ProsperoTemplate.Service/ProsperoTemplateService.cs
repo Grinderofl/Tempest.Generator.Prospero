@@ -12,6 +12,7 @@ using Prospero.DataAccess.EFCore.Conventions;
 using Prospero.Extensions.EntityFramework.Conventions;
 using Prospero.Extensions.EntityFramework.Conventions.SqlServer;
 using Prospero.Extensions.Logging.Conventions;
+using ProsperoTemplate.Core.Configuration;
 
 namespace ProsperoTemplate.Service
 {
@@ -25,7 +26,7 @@ namespace ProsperoTemplate.Service
                             .AddJsonFile("appsettings.Production.json", optional: true)
                             .AddEnvironmentVariables())
                 .AddAssemblyOf<ProsperoTemplateService>()
-                .AddAssemblyOf<ProsperoTemplateModelBuilderAlteration>()
+                .AddAssemblyOf<ProsperoTemplateSettings>()
                 .EnableAutomapper()
                 .EnableLogging()
                 .EnableEntityFramework(e => e.UseSqlServer())

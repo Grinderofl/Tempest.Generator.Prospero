@@ -12,6 +12,7 @@ using Prospero.Extensions.AspNet.StaticFiles.Conventions;
 using Prospero.Extensions.Logging.Conventions;
 using Prospero.Extensions.EntityFramework.Conventions;
 using Prospero.Extensions.EntityFramework.Conventions.SqlServer;
+using ProsperoTemplate.Core.Configuration;
 
 namespace ProsperoTemplate.Web
 {
@@ -32,7 +33,7 @@ namespace ProsperoTemplate.Web
                             .AddJsonFile("appsettings.json")
                             .AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional:true)
                             .AddEnvironmentVariables())
-                .AddAssemblyOf<ProsperoTemplateModelBuilderAlteration>()
+                .AddAssemblyOf<ProsperoTemplateSettings>()
                 .AddAssemblyOf<Startup>()
                 .EnableLogging()
                 .EnableDeveloperExceptionPage()

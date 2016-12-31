@@ -35,6 +35,11 @@ namespace Tempest.Generator.Prospero.Impl
 
         }
 
+        protected virtual string BuildProjectPath(string sub)
+        {
+            return $"src/{_options.ProjectName}/project.json";
+        }
+
         protected virtual Func<string, string> BuildTemplatePath => s => $"Tempest.Generator.Prospero.Template.{s}";
 
         protected virtual Func<string, string> BuildCorePath => s => $"Tempest.Generator.Prospero.Template.src.ProsperoTemplate.Core.{s}";
@@ -49,17 +54,25 @@ namespace Tempest.Generator.Prospero.Impl
             builder.Copy.Resource(BuildTemplatePath("build.ps1")).ToFile("build.ps1");
             builder.Copy.Resource(BuildTemplatePath("build.cmd")).ToFile("build.cmd");
             builder.Copy.Resource(BuildTemplatePath("global.json")).ToFile("global.json");
-
         }
 
         protected virtual void CopyCore(IScaffoldBuilder builder)
         {
-            builder.Copy.Resource(BuildCorePath("project.json"));
+            builder.Copy.Resource(BuildCorePath("project.json")).ToFile($"src/{_options.ProjectName}/project.json");
+            builder.Copy.Resource(BuildCorePath("ProsperoTemplate.Core.xproj")).ToFile($"src/{_options.SolutionName}/{_options.SolutionName}.Core.xproj");
+            builder.Copy.Resource(BuildCorePath("Configuration.ProsperoTemplateSettings.cs"))
+                .ToFile($"src/{_options.SolutionName}/Configuration/{_options.SolutionName}Settings.cs");
+            if (_options.HasComponent(ComponentTypes.EntityFramework))
+                builder.Copy.Resource(BuildCorePath(
+                        "Infrastructure.EntityFramework.ProsperoTemplateModelBuilderAlteration.cs"))
+                    .ToFile(
+                        $"src/{_options.SolutionName}/Infrastructure/EntityFramework/{_options.SolutionName}ModelBuilderAlteration.cs");
+
         }
 
         protected virtual void CopyWeb(IScaffoldBuilder builder)
         {
-
+            
         }
 
         protected virtual void CopyConsole(IScaffoldBuilder builder)

@@ -2,7 +2,7 @@ using FluentModelBuilder.Alterations;
 using FluentModelBuilder.Builder;
 using FluentModelBuilder.Relational.Conventions;
 
-namespace ProsperoTemplate.Core
+namespace ProsperoTemplate.Core.Infrastructure.EntityFramework
 {
     public class ProsperoTemplateModelBuilderAlteration : IAutoModelBuilderAlteration
     {
