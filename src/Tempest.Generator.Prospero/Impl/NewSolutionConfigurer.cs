@@ -28,10 +28,12 @@ namespace Tempest.Generator.Prospero.Impl
             CopyCore(builder);
 
             // Copy Web
-            CopyWeb(builder);
+            if(_options.HasProjectType(ProjectTypes.Web))
+                CopyWeb(builder);
 
             // Copy Service
-            CopyConsole(builder);
+            if(_options.HasProjectType(ProjectTypes.Console))
+                CopyConsole(builder);
 
         }
 
@@ -44,12 +46,13 @@ namespace Tempest.Generator.Prospero.Impl
 
         protected virtual Func<string, string> BuildCorePath => s => $"Tempest.Generator.Prospero.Template.src.ProsperoTemplate.Core.{s}";
 
+        private string GetBuildCakeFile => _options.HasProjectType(ProjectTypes.Web)
+            ? "build.cake"
+            : "WebJob.build.cake";
+
         protected virtual void CopyBuildScripts(IScaffoldBuilder builder)
         {
-            if (_options.HasProjectType(ProjectTypes.Web))
-                builder.Copy.Resource("build.cake");
-            else
-                builder.Copy.Resource("WebJob.build.cake");
+            builder.Copy.Resource(BuildTemplatePath(GetBuildCakeFile)).ToFile("build.cake");
 
             builder.Copy.Resource(BuildTemplatePath("build.ps1")).ToFile("build.ps1");
             builder.Copy.Resource(BuildTemplatePath("build.cmd")).ToFile("build.cmd");
@@ -62,6 +65,7 @@ namespace Tempest.Generator.Prospero.Impl
             builder.Copy.Resource(BuildCorePath("ProsperoTemplate.Core.xproj")).ToFile($"src/{_options.SolutionName}/{_options.SolutionName}.Core.xproj");
             builder.Copy.Resource(BuildCorePath("Configuration.ProsperoTemplateSettings.cs"))
                 .ToFile($"src/{_options.SolutionName}/Configuration/{_options.SolutionName}Settings.cs");
+
             if (_options.HasComponent(ComponentTypes.EntityFramework))
                 builder.Copy.Resource(BuildCorePath(
                         "Infrastructure.EntityFramework.ProsperoTemplateModelBuilderAlteration.cs"))
