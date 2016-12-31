@@ -37,22 +37,17 @@ namespace Tempest.Generator.Prospero.Impl
 
         }
 
-        protected virtual string BuildProjectPath(string sub)
-        {
-            return $"src/{_options.ProjectName}/project.json";
-        }
-
         protected virtual Func<string, string> BuildTemplatePath => s => $"Tempest.Generator.Prospero.Template.{s}";
 
         protected virtual Func<string, string> BuildCorePath => s => $"Tempest.Generator.Prospero.Template.src.ProsperoTemplate.Core.{s}";
 
-        private string GetBuildCakeFile => _options.HasProjectType(ProjectTypes.Web)
+        private string BuildCakeScriptFileName() => _options.HasProjectType(ProjectTypes.Web)
             ? "build.cake"
             : "WebJob.build.cake";
 
         protected virtual void CopyBuildScripts(IScaffoldBuilder builder)
         {
-            builder.Copy.Resource(BuildTemplatePath(GetBuildCakeFile)).ToFile("build.cake");
+            builder.Copy.Resource(BuildTemplatePath(BuildCakeScriptFileName())).ToFile("build.cake");
 
             builder.Copy.Resource(BuildTemplatePath("build.ps1")).ToFile("build.ps1");
             builder.Copy.Resource(BuildTemplatePath("build.cmd")).ToFile("build.cmd");
