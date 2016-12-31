@@ -36,18 +36,21 @@
   "buildOptions": {
       "emitEntryPoint": true,
       "compile": {
-      "exclude": "Template\\**\\*.*"
-    },
-    "copyToOutput": {
-      "include": [
-        "Template\\**\\*.*" 
-      ]
-    },
-    "embed": {
-      "include": [
-        "Template\\**\\*.*"
-      ]
-    }
+          "exclude": "Template\\**\\*.*"
+      },
+      "copyToOutput": {
+          "include": [
+              "Template\\**\\*.*"
+          ]
+      },
+      "embed": {
+          "include": [
+              "Template\\**\\*.*"
+          ],
+          "includeFiles": [
+              "Template/src/ProsperoTemplate.Core/ProsperoTemplate.Core.xproj"
+          ]
+      }
   },
 
 }

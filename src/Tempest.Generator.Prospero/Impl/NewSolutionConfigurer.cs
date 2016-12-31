@@ -18,7 +18,7 @@ namespace Tempest.Generator.Prospero.Impl
         {
             if (!_options.IsNewProject)
                 return;
-
+            builder.Set.TargetSubDirectory(_options.SolutionName);
             builder.Globally.TransformToken("ProsperoTemplate", _options.SolutionName);
 
             // Copy build scripts
@@ -72,7 +72,7 @@ namespace Tempest.Generator.Prospero.Impl
 
         protected virtual void CopyWeb(IScaffoldBuilder builder)
         {
-            
+
         }
 
         protected virtual void CopyConsole(IScaffoldBuilder builder)
