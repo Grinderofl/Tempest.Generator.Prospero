@@ -37,9 +37,9 @@ namespace Tempest.Generator.Prospero.Impl
 
         }
 
-        protected virtual Func<string, string> BuildTemplatePath => s => $"Tempest.Generator.Prospero.Template.{s}";
+        protected virtual Func<string, string> BuildResource => s => $"Tempest.Generator.Prospero.Template.{s}";
 
-        protected virtual Func<string, string> BuildCorePath => s => $"Tempest.Generator.Prospero.Template.src.ProsperoTemplate.Core.{s}";
+        protected virtual Func<string, string> BuildCoreResource => s => $"Tempest.Generator.Prospero.Template.src.ProsperoTemplate.Core.{s}";
 
         private string BuildCakeScriptFileName() => _options.HasProjectType(ProjectTypes.Web)
             ? "build.cake"
@@ -47,26 +47,41 @@ namespace Tempest.Generator.Prospero.Impl
 
         protected virtual void CopyBuildScripts(IScaffoldBuilder builder)
         {
-            builder.Copy.Resource(BuildTemplatePath(BuildCakeScriptFileName())).ToFile("build.cake");
+            builder.Copy.Resource(BuildResource(BuildCakeScriptFileName())).ToFile("build.cake");
 
-            builder.Copy.Resource(BuildTemplatePath("build.ps1")).ToFile("build.ps1");
-            builder.Copy.Resource(BuildTemplatePath("build.cmd")).ToFile("build.cmd");
-            builder.Copy.Resource(BuildTemplatePath("global.json")).ToFile("global.json");
+            builder.Copy.Resource(BuildResource("build.ps1")).ToFile("build.ps1");
+            builder.Copy.Resource(BuildResource("build.cmd")).ToFile("build.cmd");
+            builder.Copy.Resource(BuildResource("global.json")).ToFile("global.json");
         }
 
         protected virtual void CopyCore(IScaffoldBuilder builder)
         {
-            builder.Copy.Resource(BuildCorePath("project.json")).ToFile($"src/{_options.ProjectName}/project.json");
-            builder.Copy.Resource(BuildCorePath("ProsperoTemplate.Core.xproj")).ToFile($"src/{_options.SolutionName}.Core/{_options.SolutionName}.Core.xproj");
-            builder.Copy.Resource(BuildCorePath("Configuration.ProsperoTemplateSettings.cs"))
-                .ToFile($"src/{_options.SolutionName}/Configuration/{_options.SolutionName}Settings.cs");
+            var projectJson = builder.Copy.Resource(BuildCoreResource("project.json")).ToFile($"src/{_options.ProjectName}/project.json");
 
-            if (_options.HasComponent(ComponentTypes.EntityFramework))
-                builder.Copy.Resource(BuildCorePath(
+
+            builder.Copy.Resource(BuildCoreResource("ProsperoTemplate.Core.xproj")).ToFile($"src/{_options.SolutionName}.Core/{_options.SolutionName}.Core.xproj");
+            builder.Copy.Resource(BuildCoreResource("Configuration.ProsperoTemplateSettings.cs"))
+                .ToFile($"src/{_options.SolutionName}.Core/Configuration/{_options.SolutionName}Settings.cs");
+
+            if (!_options.HasComponent(ComponentTypes.EntityFramework))
+            {
+                // Destruction instead of generation for now
+                projectJson.RemoveToken(".EnableDataAccess(d => d.UseEntityFramework())");
+            }
+            else
+                builder.Copy.Resource(BuildCoreResource(
                         "Infrastructure.EntityFramework.ProsperoTemplateModelBuilderAlteration.cs"))
                     .ToFile(
-                        $"src/{_options.SolutionName}/Infrastructure/EntityFramework/{_options.SolutionName}ModelBuilderAlteration.cs");
+                        $"src/{_options.SolutionName}.Core/Infrastructure/EntityFramework/{_options.SolutionName}ModelBuilderAlteration.cs");
 
+            if (!_options.HasComponent(ComponentTypes.DataAccess))
+            {
+                projectJson.RemoveProjectJsonDataAccess();
+            }
+            if (!_options.HasComponent(ComponentTypes.Automapper))
+            {
+                projectJson.RemoveProjectJsonAutoMapper();
+            }
         }
 
         protected virtual void CopyWeb(IScaffoldBuilder builder)
@@ -88,5 +103,30 @@ namespace Tempest.Generator.Prospero.Impl
         {
             return builder.ResourceOf<ProsperoGenerator>(resourcePath);
         }
+
+        public static OperationStep RemoveToken(this OperationStep step, string token)
+        {
+            return step.TransformToken(token, "");
+        }
+
+        public static OperationStep RemoveProjectJsonAutoMapper(this OperationStep step)
+        {
+            return step.RemoveToken("\"AutoMapper\": \"5.0.2\",");
+        }
+
+        public static OperationStep RemoveProjectJsonDataAccess(this OperationStep step)
+        {
+            return step
+                .RemoveToken("\"Prospero.DataAccess.Abstractions\": \"1.0.0-*\",")
+                .RemoveToken("\"Prospero.DataAccess.EFCore\": \"1.0.0-*\",");
+        }
+
+        public static OperationStep RemoveProjectJsonEntityFramework(this OperationStep step)
+        {
+            return step
+                .RemoveToken("\"FluentModelBuilder\": \"1.5.1\",")
+                .RemoveToken("\"FluentModelBuilder.Relational\": \"1.5.1\",");
+        }
+
     }
 }

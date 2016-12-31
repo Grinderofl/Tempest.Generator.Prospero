@@ -52,7 +52,7 @@ namespace Tempest.Generator.Prospero
         {
             options.Check("Please select the desired libraries:")
                 .Choice("AutoMapper", "automapper", () => _options.UseComponent(ComponentTypes.Automapper))
-                .Choice("Entity Framework", "et", () => _options.UseComponent(ComponentTypes.EntityFramework));
+                .Choice("Entity Framework", "ef", () => _options.UseComponent(ComponentTypes.EntityFramework));
         }
 
         protected override void ConfigureGenerator(IScaffoldBuilder builder)
