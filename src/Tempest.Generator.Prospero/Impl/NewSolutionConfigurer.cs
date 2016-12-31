@@ -62,7 +62,7 @@ namespace Tempest.Generator.Prospero.Impl
         protected virtual void CopyCore(IScaffoldBuilder builder)
         {
             builder.Copy.Resource(BuildCorePath("project.json")).ToFile($"src/{_options.ProjectName}/project.json");
-            builder.Copy.Resource(BuildCorePath("ProsperoTemplate.Core.xproj")).ToFile($"src/{_options.SolutionName}/{_options.SolutionName}.Core.xproj");
+            builder.Copy.Resource(BuildCorePath("ProsperoTemplate.Core.xproj")).ToFile($"src/{_options.SolutionName}.Core/{_options.SolutionName}.Core.xproj");
             builder.Copy.Resource(BuildCorePath("Configuration.ProsperoTemplateSettings.cs"))
                 .ToFile($"src/{_options.SolutionName}/Configuration/{_options.SolutionName}Settings.cs");
 
