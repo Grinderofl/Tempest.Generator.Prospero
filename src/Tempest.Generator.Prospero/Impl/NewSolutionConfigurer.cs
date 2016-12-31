@@ -56,31 +56,36 @@ namespace Tempest.Generator.Prospero.Impl
 
         protected virtual void CopyCore(IScaffoldBuilder builder)
         {
-            var projectJson = builder.Copy.Resource(BuildCoreResource("project.json")).ToFile($"src/{_options.ProjectName}/project.json");
+            var projectJson = builder.Copy.Resource(BuildCoreResource("project.json")).ToFile($"src/{_options.SolutionName}.Core/project.json");
 
-
+            Console.WriteLine(_options.Components.Count);
+            Console.WriteLine(_options.ProjectTypes.Count);
             builder.Copy.Resource(BuildCoreResource("ProsperoTemplate.Core.xproj")).ToFile($"src/{_options.SolutionName}.Core/{_options.SolutionName}.Core.xproj");
             builder.Copy.Resource(BuildCoreResource("Configuration.ProsperoTemplateSettings.cs"))
                 .ToFile($"src/{_options.SolutionName}.Core/Configuration/{_options.SolutionName}Settings.cs");
 
-            if (!_options.HasComponent(ComponentTypes.EntityFramework))
-            {
-                // Destruction instead of generation for now
-                projectJson.RemoveToken(".EnableDataAccess(d => d.UseEntityFramework())");
-            }
-            else
-                builder.Copy.Resource(BuildCoreResource(
-                        "Infrastructure.EntityFramework.ProsperoTemplateModelBuilderAlteration.cs"))
-                    .ToFile(
-                        $"src/{_options.SolutionName}.Core/Infrastructure/EntityFramework/{_options.SolutionName}ModelBuilderAlteration.cs");
-
             if (!_options.HasComponent(ComponentTypes.DataAccess))
             {
+                Console.WriteLine("Removing Data Access");
                 projectJson.RemoveProjectJsonDataAccess();
             }
-            if (!_options.HasComponent(ComponentTypes.Automapper))
+
+            if (!_options.HasComponent(ComponentTypes.AutoMapper))
             {
+                Console.WriteLine("Removing AutoMapper");
                 projectJson.RemoveProjectJsonAutoMapper();
+            }
+
+            if (!_options.HasComponent(ComponentTypes.EntityFramework))
+            {
+                Console.WriteLine("Removing EntityFramework");
+                projectJson.RemoveProjectJsonEntityFramework();
+            }
+            else
+            {
+                Console.WriteLine("Adding EntityFramework");
+                builder.Copy.Resource(BuildCoreResource("Infrastructure.EntityFramework.ProsperoTemplateModelBuilderAlteration.cs"))
+                    .ToFile($"src/{_options.SolutionName}.Core/Infrastructure/EntityFramework/{_options.SolutionName}ModelBuilderAlteration.cs");
             }
         }
 

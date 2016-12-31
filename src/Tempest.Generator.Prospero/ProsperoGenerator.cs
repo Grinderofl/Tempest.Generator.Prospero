@@ -23,7 +23,7 @@ namespace Tempest.Generator.Prospero
                 .Choice("Update existing solution", "existing");
 
             ConfigureNewSolutionOptions(options);
-            ConfigureExistingOptions(options);
+            //ConfigureExistingOptions(options);
             ConfigureLibraries(options);
         }
 
@@ -51,8 +51,9 @@ namespace Tempest.Generator.Prospero
         private void ConfigureLibraries(OptionsFactory options)
         {
             options.Check("Please select the desired libraries:")
-                .Choice("AutoMapper", "automapper", () => _options.UseComponent(ComponentTypes.Automapper))
-                .Choice("Entity Framework", "ef", () => _options.UseComponent(ComponentTypes.EntityFramework));
+                .Choice("Entity Framework", "ef", () => _options.UseComponent(ComponentTypes.EntityFramework))
+                .Choice("AutoMapper", "automapper", () => _options.UseComponent(ComponentTypes.AutoMapper))
+                .Choice("Data Access", "data", () => _options.UseComponent(ComponentTypes.DataAccess));
         }
 
         protected override void ConfigureGenerator(IScaffoldBuilder builder)
@@ -68,8 +69,8 @@ namespace Tempest.Generator.Prospero
 
     public enum ComponentTypes
     {
-        Automapper,
         DataAccess,
+        AutoMapper,
         EntityFramework
     }
 }

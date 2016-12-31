@@ -1,4 +1,5 @@
-﻿using Tempest.Generator.Prospero.Extensions;
+﻿using System.Collections.Generic;
+using Tempest.Generator.Prospero.Extensions;
 
 namespace Tempest.Generator.Prospero
 {
@@ -8,12 +9,12 @@ namespace Tempest.Generator.Prospero
 
         public bool HasProjectType(ProjectTypes type)
         {
-            return ProjectTypes.Has(type);
+            return ProjectTypes.Contains(type);
         }
 
         public bool HasComponent(ComponentTypes type)
         {
-            return Components.Has(type);
+            return Components.Contains(type);
         }
 
         public ProsperoOptions UseProjectType(ProjectTypes type)
@@ -28,8 +29,8 @@ namespace Tempest.Generator.Prospero
             return this;
         }
 
-        public ProjectTypes ProjectTypes { get; set; }
-        public ComponentTypes Components { get; set; }
+        public List<ProjectTypes> ProjectTypes { get; } = new List<ProjectTypes>();
+        public List<ComponentTypes> Components { get; } = new List<ComponentTypes>();
         public string ProjectName { get; set; }
         public bool IsNewProject { get; set; }
     }
