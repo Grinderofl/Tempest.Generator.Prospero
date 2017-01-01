@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 using Tempest.Core.Configuration.Operations.OperationBuilding;
 using Tempest.Core.Logging;
 using Tempest.Core.Scaffolding;
@@ -49,9 +51,12 @@ namespace Tempest.Generator.Prospero.Impl
         protected virtual Func<string, string> BuildWebResource =>
             s => BuildResource($"src.ProsperoTemplate.Web.{s}");
 
+        protected virtual Func<string, string> BuildConsoleResource =>
+            s => BuildResource($"src.ProsperoTemplate.Service.{s}");
+
         protected virtual Func<string, string> BuildCoreTarget => s => $"src/{_options.SolutionName}.Core/{s}";
         protected virtual Func<string, string> BuildWebTarget => s => $"src/{_options.SolutionName}.Web/{s}";
-
+        protected virtual Func<string, string> BuildConsoleTarget => s => $"src/{_options.SolutionName}.Console/{s}";
 
         private string BuildCakeScriptFileName() => _options.HasProjectType(ProjectTypes.Web)
             ? "build.cake"
@@ -118,22 +123,84 @@ namespace Tempest.Generator.Prospero.Impl
             }
         }
 
+        private void UpdateStartupCs(OperationStep startupCs)
+        {
+
+        }
+
+
         protected virtual void CopyWeb(IScaffoldBuilder builder)
         {
-            var projectJson = builder.Copy.Resource(BuildWebResource("project.json"))
-                .ToFile(BuildWebTarget("project.json"));
-             UpdateProjectJson(projectJson);
+            var views = new string[]
+            {
+                "_ViewImports.cshtml",
+                "_ViewStart.cshtml",
+                "Home/About.cshtml",
+                "Home/Contact.cshtml",
+                "Home/Index.cshtml",
+                "Shared/_Layout.cshtml",
+                "Shared/Error.cshtml"
+            };
 
+            foreach (var view in views)
+            {
+                builder.Copy.Resource(BuildWebResource("Views." + view.Replace("/", "."))).ToFile(BuildWebTarget("Views/" + view));
+            }
+
+            var wwws = new[]
+            {
+                "css/site.css",
+                "images/banner1.svg",
+                "images/banner2.svg",
+                "images/banner3.svg",
+                "images/banner4.svg",
+                "js/site.js",
+                "favicon.ico"
+            };
+
+            foreach (var www in wwws)
+            {
+                builder.Copy.Resource(BuildWebResource("wwwroot." + www.Replace("/", "."))).ToFile(BuildWebTarget("wwwroot/" + www));
+            }
+
+//            builder.Copy.ResourcePath(BuildWebResource("Views")).ToFiles();
+//            builder.Copy.ResourcePath(BuildWebResource("wwwroot")).ToFiles();
+//            builder.Copy.ResourcePath(BuildWebResource("Controllers")).ToFiles();
+
+            builder.Copy.Resource(BuildWebResource("Controllers.HomeController.cs"))
+                .ToFile(BuildWebTarget("Controllers/HomeController.cs"));
             builder.Copy.Resource(BuildWebResource("appsettings.json"))
                 .ToFile(BuildWebTarget("appsettings.json"));
             builder.Copy.Resource(BuildWebResource("bundleconfig.json"))
                 .ToFile(BuildWebTarget("bundleconfig.json"));
 
+            var projectJson = builder.Copy.Resource(BuildWebResource("project.json"))
+                .ToFile(BuildWebTarget("project.json"));
+
+            UpdateProjectJson(projectJson);
+
+            if (_options.HasComponent(ComponentTypes.EntityFramework))
+            {
+                builder.Copy.Resource(BuildWebResource("Core.Factories.ProsperoTemplateWebDbContextFactory.cs"))
+                    .ToFile(BuildWebTarget($"Core/Factories/{_options.SolutionName}DbContextFactory.cs"));
+            }
         }
 
         protected virtual void CopyConsole(IScaffoldBuilder builder)
         {
+            var projectJson = builder.Copy.Resource(BuildConsoleResource("project.json"))
+                .ToFile(BuildConsoleTarget("project.json"));
+            UpdateProjectJson(projectJson);
 
+            builder.Copy.Resource(BuildConsoleResource(BuildConsoleResource("appsettings.json")))
+                .ToFile(BuildConsoleTarget("appsettings.json"));
+            builder.Copy.Resource(BuildConsoleResource(BuildConsoleResource("run.cmd")))
+                .ToFile(BuildConsoleTarget("run.cmd"));
+            builder.Copy.Resource(BuildConsoleResource(BuildConsoleResource("Program.cs")))
+                .ToFile(BuildConsoleTarget("Program.cs"));
+            var startupCs = builder.Copy.Resource(BuildConsoleResource("ProsperoTemplateConsole.cs"))
+                .ToFile(BuildConsoleTarget($"{_options.SolutionName}Console.cs"));
+            UpdateStartupCs(startupCs);
         }
 
         public override int Order => 0;
@@ -144,6 +211,11 @@ namespace Tempest.Generator.Prospero.Impl
         public static OperationStep Resource(this CopyOperationBuilder builder, string resourcePath)
         {
             return builder.ResourceOf<ProsperoGenerator>(resourcePath);
+        }
+
+        public static OperationStep ResourcePath(this CopyOperationBuilder builder, string resourcePath)
+        {
+            return builder.ResourcePathOf<ProsperoGenerator>(resourcePath);
         }
 
         public static OperationStep RemoveToken(this OperationStep step, string token)

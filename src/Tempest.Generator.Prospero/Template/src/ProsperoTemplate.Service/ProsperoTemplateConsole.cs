@@ -14,9 +14,9 @@ using Prospero.Extensions.EntityFramework.Conventions.SqlServer;
 using Prospero.Extensions.Logging.Conventions;
 using ProsperoTemplate.Core.Configuration;
 
-namespace ProsperoTemplate.Service
+namespace ProsperoTemplate.Console
 {
-    public class ProsperoTemplateService : DefaultConventionConsoleApplication
+    public class ProsperoTemplateConsole : DefaultConventionConsoleApplication
     {
         protected override void ConfigureApplication(ConsoleConventionConfiguration applicationConventions)
         {
@@ -25,7 +25,7 @@ namespace ProsperoTemplate.Service
                         conf.AddJsonFile("appsettings.json")
                             .AddJsonFile("appsettings.Production.json", optional: true)
                             .AddEnvironmentVariables())
-                .AddAssemblyOf<ProsperoTemplateService>()
+                .AddAssemblyOf<ProsperoTemplateConsole>()
                 .AddAssemblyOf<ProsperoTemplateSettings>()
                 .EnableAutomapper()
                 .EnableLogging()
