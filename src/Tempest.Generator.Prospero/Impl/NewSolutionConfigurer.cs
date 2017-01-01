@@ -11,17 +11,15 @@ namespace Tempest.Generator.Prospero.Impl
     public class NewSolutionConfigurer : AbstractScaffolderConfigurer
     {
         private readonly ProsperoOptions _options;
-        private readonly IEmitter _emitter;
 
-        public NewSolutionConfigurer(ProsperoOptions options, IEmitter emitter)
+        public NewSolutionConfigurer(ProsperoOptions options)
         {
             _options = options;
-            _emitter = emitter;
         }
 
         protected override void ConfigureScaffolder(IScaffoldBuilder builder)
         {
-            _emitter.SetForegroundColor(ConsoleColor.Magenta);
+            //_emitter.SetForegroundColor(ConsoleColor.Magenta);
             if (!_options.IsNewProject)
                 return;
             builder.Set.TargetSubDirectory(_options.SolutionName);
@@ -41,22 +39,25 @@ namespace Tempest.Generator.Prospero.Impl
             if(_options.HasProjectType(ProjectTypes.Console))
                 CopyConsole(builder);
 
+            CopyTests(builder);
         }
 
         protected virtual Func<string, string> BuildResource => s => $"Tempest.Generator.Prospero.Template.{s}";
 
         protected virtual Func<string, string> BuildCoreResource =>
             s => BuildResource($"src.ProsperoTemplate.Core.{s}");
-
         protected virtual Func<string, string> BuildWebResource =>
             s => BuildResource($"src.ProsperoTemplate.Web.{s}");
-
         protected virtual Func<string, string> BuildConsoleResource =>
             s => BuildResource($"src.ProsperoTemplate.Console.{s}");
+
+        protected virtual Func<string, string> BuildTestResource =>
+            s => BuildResource($"test.ProsperoTemplate.Tests.{s}");
 
         protected virtual Func<string, string> BuildCoreTarget => s => $"src/{_options.SolutionName}.Core/{s}";
         protected virtual Func<string, string> BuildWebTarget => s => $"src/{_options.SolutionName}.Web/{s}";
         protected virtual Func<string, string> BuildConsoleTarget => s => $"src/{_options.SolutionName}.Console/{s}";
+        protected virtual Func<string, string> BuildTestTarget => s => $"test/{_options.SolutionName}.Console/{s}";
 
         private string BuildCakeScriptFileName() => _options.HasProjectType(ProjectTypes.Web)
             ? "build.cake"
@@ -88,13 +89,17 @@ namespace Tempest.Generator.Prospero.Impl
 
             if(_options.HasComponent(ComponentTypes.EntityFramework))
             {
-                _emitter.Emit("Adding EntityFramework");
                 builder.Copy.Resource(BuildCoreResource("Infrastructure.EntityFramework.ProsperoTemplateModelBuilderAlteration.cs"))
                     .ToFile($"src/{_options.SolutionName}.Core/Infrastructure/EntityFramework/{_options.SolutionName}ModelBuilderAlteration.cs");
             }
+        }
 
-
-
+        protected virtual void CopyTests(IScaffoldBuilder builder)
+        {
+            builder.Copy.Resource(BuildTestResource("project.json")).ToFile(BuildTestTarget("project.json"));
+            builder.Copy.Resource(BuildTestResource("ProsperoTemplate.Tests.xproj"))
+                .ToFile(BuildTestTarget($"{_options.SolutionName}.Tests.xproj"));
+            builder.Copy.Resource(BuildTestResource("SanitySpec.cs")).ToFile(BuildTestTarget("SanitySpec.cs"));
         }
 
         protected virtual void CopyWeb(IScaffoldBuilder builder)
@@ -130,10 +135,6 @@ namespace Tempest.Generator.Prospero.Impl
             {
                 builder.Copy.Resource(BuildWebResource("wwwroot." + www.Replace("/", "."))).ToFile(BuildWebTarget("wwwroot/" + www));
             }
-
-//            builder.Copy.ResourcePath(BuildWebResource("Views")).ToFiles();
-//            builder.Copy.ResourcePath(BuildWebResource("wwwroot")).ToFiles();
-//            builder.Copy.ResourcePath(BuildWebResource("Controllers")).ToFiles();
 
             builder.Copy.Resource(BuildWebResource("Controllers.HomeController.cs"))
                 .ToFile(BuildWebTarget("Controllers/HomeController.cs"));
@@ -194,27 +195,15 @@ namespace Tempest.Generator.Prospero.Impl
             {
                 projectJson.RemoveProjectJsonDataAccess();
             }
-            else
-            {
-                _emitter.Emit("Enabling Data Access...");
-            }
 
             if (!_options.HasComponent(ComponentTypes.AutoMapper))
             {
                 projectJson.RemoveProjectJsonAutoMapper();
             }
-            else
-            {
-                _emitter.Emit("Enabling AutoMapper...");
-            }
 
             if (!_options.HasComponent(ComponentTypes.EntityFramework))
             {
                 projectJson.RemoveProjectJsonEntityFramework();
-            }
-            else
-            {
-                _emitter.Emit("Enabling Entity Framework...");
             }
 
 
