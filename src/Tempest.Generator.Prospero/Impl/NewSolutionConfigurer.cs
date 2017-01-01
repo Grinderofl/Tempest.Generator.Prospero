@@ -58,15 +58,9 @@ namespace Tempest.Generator.Prospero.Impl
         protected virtual Func<string, string> BuildWebTarget => s => $"src/{_options.SolutionName}.Web/{s}";
         protected virtual Func<string, string> BuildConsoleTarget => s => $"src/{_options.SolutionName}.Console/{s}";
         protected virtual Func<string, string> BuildTestTarget => s => $"test/{_options.SolutionName}.Console/{s}";
-
-        private string BuildCakeScriptFileName() => _options.HasProjectType(ProjectTypes.Web)
-            ? "build.cake"
-            : "WebJob.build.cake";
-
         protected virtual void CopyBuildScripts(IScaffoldBuilder builder)
         {
-            builder.Copy.Resource(BuildResource(BuildCakeScriptFileName())).ToFile("build.cake");
-
+            builder.Copy.Resource(BuildResource("build.cake")).ToFile("build.cake");
             builder.Copy.Resource(BuildResource("build.ps1")).ToFile("build.ps1");
             builder.Copy.Resource(BuildResource("build.cmd")).ToFile("build.cmd");
             builder.Copy.Resource(BuildResource("build.sh")).ToFile("build.sh");
