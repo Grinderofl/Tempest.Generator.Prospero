@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{2F0B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{5AC1D681-A469-4578-9215-0CB4884F8E71}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProsperoTemplate.Service", "src\ProsperoTemplate.Service\ProsperoTemplate.Service.xproj", "{7253DFD8-28C6-4E8E-B114-06418364F401}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProsperoTemplate.Console", "src\ProsperoTemplate.Console\ProsperoTemplate.Console.xproj", "{7253DFD8-28C6-4E8E-B114-06418364F401}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProsperoTemplate.Core", "src\ProsperoTemplate.Core\ProsperoTemplate.Core.xproj", "{0005792B-1C5A-4FF7-9647-269C4688C69A}"
 EndProject

@@ -85,7 +85,7 @@
   "scripts": {
     "prepublish": [ "bower install", "dotnet bundle" ],
     "postpublish": [ 
-		"dotnet publish ..\\ProsperoTemplate.Service\\ -o %publish:OutputPath%\\app_data\\jobs\\continuous\\ProsperoTemplate.Service\\",
+		"dotnet publish ..\\ProsperoTemplate.Console\\ -o %publish:OutputPath%\\app_data\\jobs\\continuous\\ProsperoTemplate.Console\\",
 		"dotnet transform-xdt --xml \"%publish:ProjectPath%\\web.config\" --transform \"%publish:ProjectPath%\\web.%publish:Configuration%.config\" --output \"%publish:OutputPath%\\web.config\"",
 		"dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%" 
 	]

@@ -7,6 +7,7 @@ using Prospero.Conventions.AspNet;
 using Prospero.Conventions.AspNet.Mvc.Install;
 using Prospero.DataAccess.Conventions;
 using Prospero.DataAccess.EFCore.Conventions;
+using Prospero.Conventions.AutoMapper;
 using Prospero.Extensions.AspNet.Developer.Conventions;
 using Prospero.Extensions.AspNet.StaticFiles.Conventions;
 using Prospero.Extensions.Logging.Conventions;
@@ -36,6 +37,7 @@ namespace ProsperoTemplate.Web
                 .AddAssemblyOf<ProsperoTemplateSettings>()
                 .AddAssemblyOf<Startup>()
                 .EnableLogging()
+                .EnableAutomapper()
                 .EnableDeveloperExceptionPage()
                 .EnableBrowserLink()
                 .EnableStaticFiles()

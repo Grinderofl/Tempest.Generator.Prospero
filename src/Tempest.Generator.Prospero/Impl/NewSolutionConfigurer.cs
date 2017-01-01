@@ -52,7 +52,7 @@ namespace Tempest.Generator.Prospero.Impl
             s => BuildResource($"src.ProsperoTemplate.Web.{s}");
 
         protected virtual Func<string, string> BuildConsoleResource =>
-            s => BuildResource($"src.ProsperoTemplate.Service.{s}");
+            s => BuildResource($"src.ProsperoTemplate.Console.{s}");
 
         protected virtual Func<string, string> BuildCoreTarget => s => $"src/{_options.SolutionName}.Core/{s}";
         protected virtual Func<string, string> BuildWebTarget => s => $"src/{_options.SolutionName}.Web/{s}";
@@ -91,6 +91,8 @@ namespace Tempest.Generator.Prospero.Impl
                     .ToFile($"src/{_options.SolutionName}.Core/Infrastructure/EntityFramework/{_options.SolutionName}ModelBuilderAlteration.cs");
             }
 
+
+
         }
 
         private void UpdateProjectJson(OperationStep projectJson)
@@ -121,11 +123,40 @@ namespace Tempest.Generator.Prospero.Impl
             {
                 _emitter.Emit("Enabling Entity Framework...");
             }
+
+
+            if (!_options.HasProjectType(ProjectTypes.Console))
+            {
+                projectJson.TransformToken("\"postpublish\": [ ",
+                    $"\"postpublish\": [ \n\t \"dotnet publish ..\\\\{_options.SolutionName}.Console\\\\ -o %publish:OutputPath%\\\\app_data\\\\jobs\\\\continuous\\\\{_options.SolutionName}.Console\\\\\",");
+            }
         }
 
         private void UpdateStartupCs(OperationStep startupCs)
         {
+            if (!_options.HasComponent(ComponentTypes.DataAccess))
+            {
+                startupCs
+                    .RemoveToken(".EnableDataAccess(d => d.UseEntityFramework())")
+                    .RemoveToken("using Prospero.DataAccess.EFCore.Conventions;");
+            }
 
+            if (!_options.HasComponent(ComponentTypes.EntityFramework))
+            {
+                startupCs
+                    .RemoveToken($".EnableEntityFramework(x => x.UseSqlServer(s => s.MigrationsAssembly(\"{_options.SolutionName}.Web\")))")
+                    .RemoveToken(".EnableEntityFramework(e => e.UseSqlServer())")
+                    .RemoveToken("using Prospero.Extensions.EntityFramework.Conventions;")
+                    .RemoveToken("using Prospero.Extensions.EntityFramework.Conventions.SqlServer;");
+
+            }
+
+            if (!_options.HasComponent(ComponentTypes.AutoMapper))
+            {
+                startupCs
+                    .RemoveToken(".EnableAutomapper()")
+                    .RemoveToken("using Prospero.Conventions.AutoMapper;");
+            }
         }
 
 
@@ -173,6 +204,13 @@ namespace Tempest.Generator.Prospero.Impl
                 .ToFile(BuildWebTarget("appsettings.json"));
             builder.Copy.Resource(BuildWebResource("bundleconfig.json"))
                 .ToFile(BuildWebTarget("bundleconfig.json"));
+            builder.Copy.Resource(BuildWebResource("web.config"))
+                .ToFile(BuildWebTarget("web.config"));
+            builder.Copy.Resource(BuildWebResource("web.release.config"))
+                .ToFile(BuildWebTarget("web.release.config"));
+
+            builder.Copy.Resource(BuildWebResource("ProsperoTemplate.Web.xproj"))
+                .ToFile(BuildWebTarget($"{_options.SolutionName}.Web.xproj"));
 
             var projectJson = builder.Copy.Resource(BuildWebResource("project.json"))
                 .ToFile(BuildWebTarget("project.json"));
@@ -192,15 +230,18 @@ namespace Tempest.Generator.Prospero.Impl
                 .ToFile(BuildConsoleTarget("project.json"));
             UpdateProjectJson(projectJson);
 
-            builder.Copy.Resource(BuildConsoleResource(BuildConsoleResource("appsettings.json")))
+            builder.Copy.Resource(BuildConsoleResource("appsettings.json"))
                 .ToFile(BuildConsoleTarget("appsettings.json"));
-            builder.Copy.Resource(BuildConsoleResource(BuildConsoleResource("run.cmd")))
+            builder.Copy.Resource(BuildConsoleResource("run.cmd"))
                 .ToFile(BuildConsoleTarget("run.cmd"));
-            builder.Copy.Resource(BuildConsoleResource(BuildConsoleResource("Program.cs")))
+            builder.Copy.Resource(BuildConsoleResource("Program.cs"))
                 .ToFile(BuildConsoleTarget("Program.cs"));
             var startupCs = builder.Copy.Resource(BuildConsoleResource("ProsperoTemplateConsole.cs"))
                 .ToFile(BuildConsoleTarget($"{_options.SolutionName}Console.cs"));
             UpdateStartupCs(startupCs);
+
+            builder.Copy.Resource(BuildConsoleResource("ProsperoTemplate.Console.xproj"))
+                .ToFile(BuildConsoleTarget($"{_options.SolutionName}.Console.xproj"));
         }
 
         public override int Order => 0;
