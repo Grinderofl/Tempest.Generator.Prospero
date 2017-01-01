@@ -20,7 +20,8 @@ namespace Tempest.Generator.Prospero
     {
         public static void Main(string[] args)
         {
-            var context = GeneratorContextFactory.Create<ProsperoGenerator>(args);
+            //var context = GeneratorContextFactory.Create<ProsperoGenerator>(args);
+            var context = GeneratorContextFactory.Create<ProsperoGenerator>(new []{"Asdfw", "solution", "web", "data"});
             new GeneratorBootstrapperFactory().Create(context).Execute();
             Console.WriteLine("Completed");
         }
