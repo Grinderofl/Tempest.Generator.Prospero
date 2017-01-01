@@ -68,7 +68,9 @@ namespace Tempest.Generator.Prospero.Impl
 
             builder.Copy.Resource(BuildResource("build.ps1")).ToFile("build.ps1");
             builder.Copy.Resource(BuildResource("build.cmd")).ToFile("build.cmd");
+            builder.Copy.Resource(BuildResource("build.sh")).ToFile("build.sh");
             builder.Copy.Resource(BuildResource("global.json")).ToFile("global.json");
+            builder.Copy.Resource(BuildResource("NuGet.config")).ToFile("NuGet.config");
         }
 
         protected virtual void CopyCore(IScaffoldBuilder builder)
@@ -94,71 +96,6 @@ namespace Tempest.Generator.Prospero.Impl
 
 
         }
-
-        private void UpdateProjectJson(OperationStep projectJson)
-        {
-            if (!_options.HasComponent(ComponentTypes.DataAccess))
-            {
-                projectJson.RemoveProjectJsonDataAccess();
-            }
-            else
-            {
-                _emitter.Emit("Enabling Data Access...");
-            }
-
-            if (!_options.HasComponent(ComponentTypes.AutoMapper))
-            {
-                projectJson.RemoveProjectJsonAutoMapper();
-            }
-            else
-            {
-                _emitter.Emit("Enabling AutoMapper...");
-            }
-
-            if (!_options.HasComponent(ComponentTypes.EntityFramework))
-            {
-                projectJson.RemoveProjectJsonEntityFramework();
-            }
-            else
-            {
-                _emitter.Emit("Enabling Entity Framework...");
-            }
-
-
-            if (!_options.HasProjectType(ProjectTypes.Console))
-            {
-                projectJson.TransformToken("\"postpublish\": [ ",
-                    $"\"postpublish\": [ \n\t \"dotnet publish ..\\\\{_options.SolutionName}.Console\\\\ -o %publish:OutputPath%\\\\app_data\\\\jobs\\\\continuous\\\\{_options.SolutionName}.Console\\\\\",");
-            }
-        }
-
-        private void UpdateStartupCs(OperationStep startupCs)
-        {
-            if (!_options.HasComponent(ComponentTypes.DataAccess))
-            {
-                startupCs
-                    .RemoveToken(".EnableDataAccess(d => d.UseEntityFramework())")
-                    .RemoveToken("using Prospero.DataAccess.EFCore.Conventions;");
-            }
-
-            if (!_options.HasComponent(ComponentTypes.EntityFramework))
-            {
-                startupCs
-                    .RemoveToken($".EnableEntityFramework(x => x.UseSqlServer(s => s.MigrationsAssembly(\"{_options.SolutionName}.Web\")))")
-                    .RemoveToken(".EnableEntityFramework(e => e.UseSqlServer())")
-                    .RemoveToken("using Prospero.Extensions.EntityFramework.Conventions;")
-                    .RemoveToken("using Prospero.Extensions.EntityFramework.Conventions.SqlServer;");
-
-            }
-
-            if (!_options.HasComponent(ComponentTypes.AutoMapper))
-            {
-                startupCs
-                    .RemoveToken(".EnableAutomapper()")
-                    .RemoveToken("using Prospero.Conventions.AutoMapper;");
-            }
-        }
-
 
         protected virtual void CopyWeb(IScaffoldBuilder builder)
         {
@@ -217,6 +154,13 @@ namespace Tempest.Generator.Prospero.Impl
 
             UpdateProjectJson(projectJson);
 
+            var startupCs = builder.Copy.Resource(BuildWebResource("Startup.cs"))
+                .ToFile(BuildWebTarget("Startup.cs"));
+
+            UpdateStartupCs(startupCs);
+
+            builder.Copy.Resource(BuildWebResource("Program.cs"))
+                .ToFile(BuildWebTarget("Program.cs"));
             if (_options.HasComponent(ComponentTypes.EntityFramework))
             {
                 builder.Copy.Resource(BuildWebResource("Core.Factories.ProsperoTemplateWebDbContextFactory.cs"))
@@ -242,6 +186,72 @@ namespace Tempest.Generator.Prospero.Impl
 
             builder.Copy.Resource(BuildConsoleResource("ProsperoTemplate.Console.xproj"))
                 .ToFile(BuildConsoleTarget($"{_options.SolutionName}.Console.xproj"));
+        }
+
+        private void UpdateProjectJson(OperationStep projectJson)
+        {
+            if (!_options.HasComponent(ComponentTypes.DataAccess))
+            {
+                projectJson.RemoveProjectJsonDataAccess();
+            }
+            else
+            {
+                _emitter.Emit("Enabling Data Access...");
+            }
+
+            if (!_options.HasComponent(ComponentTypes.AutoMapper))
+            {
+                projectJson.RemoveProjectJsonAutoMapper();
+            }
+            else
+            {
+                _emitter.Emit("Enabling AutoMapper...");
+            }
+
+            if (!_options.HasComponent(ComponentTypes.EntityFramework))
+            {
+                projectJson.RemoveProjectJsonEntityFramework();
+            }
+            else
+            {
+                _emitter.Emit("Enabling Entity Framework...");
+            }
+
+
+            if (!_options.HasProjectType(ProjectTypes.Console))
+            {
+                projectJson
+                    .RemoveToken($"\"dotnet publish ..\\\\{_options.SolutionName}.Console\\\\ -o %publish:OutputPath%\\\\app_data\\\\jobs\\\\continuous\\\\{_options.SolutionName}.Console\\\\\",");
+//                projectJson.TransformToken("\"postpublish\": [ ",
+//                    $"\"postpublish\": [ \n\t \"dotnet publish ..\\\\{_options.SolutionName}.Console\\\\ -o %publish:OutputPath%\\\\app_data\\\\jobs\\\\continuous\\\\{_options.SolutionName}.Console\\\\\",");
+            }
+        }
+
+        private void UpdateStartupCs(OperationStep startupCs)
+        {
+            if (!_options.HasComponent(ComponentTypes.DataAccess))
+            {
+                startupCs
+                    .RemoveToken(".EnableDataAccess(d => d.UseEntityFramework())")
+                    .RemoveToken("using Prospero.DataAccess.EFCore.Conventions;");
+            }
+
+            if (!_options.HasComponent(ComponentTypes.EntityFramework))
+            {
+                startupCs
+                    .RemoveToken($".EnableEntityFramework(x => x.UseSqlServer(s => s.MigrationsAssembly(\"{_options.SolutionName}.Web\")))")
+                    .RemoveToken(".EnableEntityFramework(e => e.UseSqlServer())")
+                    .RemoveToken("using Prospero.Extensions.EntityFramework.Conventions;")
+                    .RemoveToken("using Prospero.Extensions.EntityFramework.Conventions.SqlServer;");
+
+            }
+
+            if (!_options.HasComponent(ComponentTypes.AutoMapper))
+            {
+                startupCs
+                    .RemoveToken(".EnableAutomapper()")
+                    .RemoveToken("using Prospero.Conventions.AutoMapper;");
+            }
         }
 
         public override int Order => 0;

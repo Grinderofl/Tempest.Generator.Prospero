@@ -48,7 +48,9 @@
               "Template\\**\\*.*"
           ],
           "includeFiles": [
-              "Template/src/ProsperoTemplate.Core/ProsperoTemplate.Core.xproj"
+              "Template/src/ProsperoTemplate.Core/ProsperoTemplate.Core.xproj",
+              "Template/src/ProsperoTemplate.Web/ProsperoTemplate.Web.xproj",
+              "Template/src/ProsperoTemplate.Console/ProsperoTemplate.Console.xproj",
           ]
       }
   },
